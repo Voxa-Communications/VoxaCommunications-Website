@@ -46,7 +46,7 @@ export const DecryptedText: React.FC<DecryptedTextProps> = ({
             clearInterval(interval);
             setDisplayText(text);
           }
-        }, 30);
+        }, 45);
 
         return () => clearInterval(interval);
       }, delay);
