@@ -33,7 +33,7 @@ export const WireframeGlobe: React.FC = () => {
       0.1,
       1000
     );
-    camera.position.z = 5;
+    camera.position.set(-3, 0, 5); // Move camera to show globe on the right
 
     // Renderer setup
     const renderer = new THREE.WebGLRenderer({ 
@@ -158,9 +158,9 @@ export const WireframeGlobe: React.FC = () => {
     const animate = () => {
       if (!scene || !renderer || !globe) return;
 
-      // Rotate globe
-      globe.rotation.y += 0.005;
-      globe.rotation.x += 0.002;
+      // Rotate globe (slower)
+      globe.rotation.y += 0.002;
+      globe.rotation.x += 0.001;
 
       // Update particles
       particlesRef.current = particlesRef.current.filter(particle => {

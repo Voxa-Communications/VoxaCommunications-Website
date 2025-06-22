@@ -3,11 +3,13 @@ import './SimpleHomePage.css';
 import { DecryptedText, TypewriterText, FadeUpText, SlideInText } from './components/AnimatedText';
 import './components/AnimatedText.css';
 import { WireframeGlobe } from './components/ThreeWireframeGlobe';
+import { TiltedCards } from './components/TiltedCards';
 
 const SimpleHomePage: React.FC = () => {
   return (
     <div className="homepage">
       <WireframeGlobe />
+      <TiltedCards />
       {/* Navigation */}
       <nav className="nav">
         <SlideInText direction="left">
