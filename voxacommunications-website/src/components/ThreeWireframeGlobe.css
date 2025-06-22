@@ -1,0 +1,28 @@
+.wireframe-globe-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.wireframe-globe-container canvas {
+  display: block;
+  opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .wireframe-globe-container canvas {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 480px) {
+  .wireframe-globe-container canvas {
+    opacity: 0.3;
+  }
+}

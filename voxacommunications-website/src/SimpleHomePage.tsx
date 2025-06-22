@@ -2,7 +2,7 @@ import React from 'react';
 import './SimpleHomePage.css';
 import { DecryptedText, TypewriterText, FadeUpText, SlideInText } from './components/AnimatedText';
 import './components/AnimatedText.css';
-import { WireframeGlobe } from './components/WireframeGlobe';
+import { WireframeGlobe } from './components/ThreeWireframeGlobe';
 
 const SimpleHomePage: React.FC = () => {
   return (
