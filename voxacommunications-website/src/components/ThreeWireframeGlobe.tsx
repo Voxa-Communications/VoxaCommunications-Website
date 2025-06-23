@@ -4,9 +4,13 @@ import './ThreeWireframeGlobe.css';
 
 interface Particle {
   mesh: THREE.Mesh;
-  velocity: THREE.Vector3;
+  startPos: THREE.Vector3;
+  endPos: THREE.Vector3;
+  controlPoint: THREE.Vector3;
   life: number;
   maxLife: number;
+  trail: THREE.Vector3[];
+  trailMesh?: THREE.Line;
 }
 
 export const WireframeGlobe: React.FC = () => {
@@ -126,31 +130,63 @@ export const WireframeGlobe: React.FC = () => {
       });
       const mesh = new THREE.Mesh(geometry, material);
       
-      // Position on globe surface
-      const phi = Math.random() * Math.PI * 2;
-      const theta = Math.random() * Math.PI;
+      // Generate random start and end points on globe surface
       const radius = 2.1;
       
-      mesh.position.x = radius * Math.sin(theta) * Math.cos(phi);
-      mesh.position.y = radius * Math.sin(theta) * Math.sin(phi);
-      mesh.position.z = radius * Math.cos(theta);
+      // Start position
+      const startPhi = Math.random() * Math.PI * 2;
+      const startTheta = Math.random() * Math.PI;
+      const startPos = new THREE.Vector3(
+        radius * Math.sin(startTheta) * Math.cos(startPhi),
+        radius * Math.sin(startTheta) * Math.sin(startPhi),
+        radius * Math.cos(startTheta)
+      );
       
+      // End position (ensure it's reasonably far from start)
+      let endPhi, endTheta, endPos;
+      do {
+        endPhi = Math.random() * Math.PI * 2;
+        endTheta = Math.random() * Math.PI;
+        endPos = new THREE.Vector3(
+          radius * Math.sin(endTheta) * Math.cos(endPhi),
+          radius * Math.sin(endTheta) * Math.sin(endPhi),
+          radius * Math.cos(endTheta)
+        );
+      } while (startPos.distanceTo(endPos) < 2); // Ensure minimum distance
+      
+      // Calculate control point for arc (higher above the surface)
+      const midPoint = startPos.clone().add(endPos).multiplyScalar(0.5);
+      const arcHeight = 1.5 + Math.random() * 1; // Random height between 1.5-2.5
+      const controlPoint = midPoint.normalize().multiplyScalar(radius + arcHeight);
+      
+      // Set initial position
+      mesh.position.copy(startPos);
       scene.add(mesh);
+      
+      // Create trail geometry
+      const trailGeometry = new THREE.BufferGeometry();
+      const trailMaterial = new THREE.LineBasicMaterial({
+        color: 0x00bcd4,
+        transparent: true,
+        opacity: 0.6
+      });
+      const trailMesh = new THREE.Line(trailGeometry, trailMaterial);
+      scene.add(trailMesh);
       
       return {
         mesh,
-        velocity: new THREE.Vector3(
-          (Math.random() - 0.5) * 0.02,
-          Math.random() * 0.03 + 0.01, // Upward movement
-          (Math.random() - 0.5) * 0.02
-        ),
+        startPos: startPos.clone(),
+        endPos: endPos.clone(),
+        controlPoint: controlPoint.clone(),
         life: 0,
-        maxLife: 200 + Math.random() * 100
+        maxLife: 120 + Math.random() * 60,
+        trail: [],
+        trailMesh
       };
     };
 
     // Initialize particles
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 8; i++) {
       particlesRef.current.push(createParticle());
     }
 
@@ -166,23 +202,58 @@ export const WireframeGlobe: React.FC = () => {
       particlesRef.current = particlesRef.current.filter(particle => {
         particle.life++;
         
-        // Update position
-        particle.mesh.position.add(particle.velocity);
+        // Calculate progress along the arc (0 to 1)
+        const progress = particle.life / particle.maxLife;
         
-        // Apply physics
-        particle.velocity.y -= 0.0005; // Slight gravity
-        
-        // Add outward drift
-        const direction = particle.mesh.position.clone().normalize();
-        particle.velocity.add(direction.multiplyScalar(0.0002));
-        
-        // Update opacity
-        const alpha = Math.max(0, 1 - (particle.life / particle.maxLife));
-        (particle.mesh.material as THREE.MeshBasicMaterial).opacity = alpha;
+        if (progress <= 1) {
+          // Quadratic Bezier curve interpolation
+          const t = progress;
+          const oneMinusT = 1 - t;
+          
+          const newPos = new THREE.Vector3()
+            .addScaledVector(particle.startPos, oneMinusT * oneMinusT)
+            .addScaledVector(particle.controlPoint, 2 * oneMinusT * t)
+            .addScaledVector(particle.endPos, t * t);
+          
+          particle.mesh.position.copy(newPos);
+          
+          // Add current position to trail
+          particle.trail.push(newPos.clone());
+          
+          // Limit trail length
+          if (particle.trail.length > 20) {
+            particle.trail.shift();
+          }
+          
+          // Update trail mesh
+          if (particle.trailMesh && particle.trail.length > 1) {
+            const positions = new Float32Array(particle.trail.length * 3);
+            particle.trail.forEach((pos, i) => {
+              positions[i * 3] = pos.x;
+              positions[i * 3 + 1] = pos.y;
+              positions[i * 3 + 2] = pos.z;
+            });
+            
+            particle.trailMesh.geometry.setAttribute('position', 
+              new THREE.BufferAttribute(positions, 3));
+            particle.trailMesh.geometry.attributes.position.needsUpdate = true;
+            
+            // Fade trail opacity based on particle life
+            const trailOpacity = Math.max(0, 0.8 * (1 - progress));
+            (particle.trailMesh.material as THREE.LineBasicMaterial).opacity = trailOpacity;
+          }
+          
+          // Update particle opacity
+          const alpha = Math.max(0, 1 - progress);
+          (particle.mesh.material as THREE.MeshBasicMaterial).opacity = alpha;
+        }
         
         // Remove expired particles
         if (particle.life >= particle.maxLife) {
           scene.remove(particle.mesh);
+          if (particle.trailMesh) {
+            scene.remove(particle.trailMesh);
+          }
           return false;
         }
         
@@ -190,7 +261,7 @@ export const WireframeGlobe: React.FC = () => {
       });
 
       // Add new particles
-      if (Math.random() < 0.03 && particlesRef.current.length < 25) {
+      if (Math.random() < 0.02 && particlesRef.current.length < 15) {
         particlesRef.current.push(createParticle());
       }
 
@@ -227,6 +298,9 @@ export const WireframeGlobe: React.FC = () => {
       particlesRef.current.forEach(particle => {
         if (scene) {
           scene.remove(particle.mesh);
+          if (particle.trailMesh) {
+            scene.remove(particle.trailMesh);
+          }
         }
       });
       
