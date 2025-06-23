@@ -49,7 +49,7 @@ const SimpleHomePage: React.FC = () => {
         <FadeUpText delay={1}>
           <div className="hero-buttons">
             <button className="primary-button">Explore Our Platform</button>
-            <a href="#learn" className="secondary-button">
+            <a href="https://voxacommunications-docs.pages.dev/learn/about/" className="secondary-button">
               Learn more →
             </a>
           </div>
