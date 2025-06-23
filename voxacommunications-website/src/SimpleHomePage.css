@@ -4,6 +4,8 @@
   background-attachment: fixed;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow-x: hidden;
 }
 
 .nav {
@@ -13,6 +15,8 @@
   padding: 1.5rem 2rem;
   position: relative;
   z-index: 10;
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .logo {
@@ -62,6 +66,8 @@
   padding: 4rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 5;
 }
 
 .hero h1 {
@@ -132,6 +138,8 @@
   padding: 6rem 2rem;
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(45, 45, 45, 0.6) 50%, rgba(0, 0, 0, 0.8) 100%);
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 5;
 }
 
 .features-container {
@@ -207,6 +215,8 @@
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(26, 26, 26, 0.7) 100%);
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(0, 229, 255, 0.2);
+  position: relative;
+  z-index: 5;
 }
 
 .footer-content {

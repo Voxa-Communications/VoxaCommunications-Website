@@ -1,17 +1,21 @@
 import React from 'react';
 import './SimpleHomePage.css';
-import { DecryptedText, GlitchText, TypewriterText, FadeUpText, SlideInText } from './components/AnimatedText';
+import { DecryptedText, TypewriterText, FadeUpText, SlideInText } from './components/AnimatedText';
 import './components/AnimatedText.css';
+import { WireframeGlobe } from './components/ThreeWireframeGlobe';
+import { TiltedCards } from './components/TiltedCards';
 
 const SimpleHomePage: React.FC = () => {
   return (
     <div className="homepage">
+      <WireframeGlobe />
+      <TiltedCards />
       {/* Navigation */}
       <nav className="nav">
         <SlideInText direction="left">
           <div className="logo">
-            <img src="/mainlogo.png" alt="Voxa Communications Logo" style={{width: '2rem', height: '2rem'}} />
-            <span>Voxa Communications</span>
+            <img src="/mainlogo.png" alt="VoxaCommunications Logo" style={{width: '2rem', height: '2rem'}} />
+            <span>VoxaCommunications</span>
           </div>
         </SlideInText>
         <SlideInText direction="right">
@@ -28,7 +32,7 @@ const SimpleHomePage: React.FC = () => {
       <section className="hero">
         <FadeUpText>
           <h1>
-            <TypewriterText text="Decentralizing the Future of" speed={100} />
+            <TypewriterText text="Decentralizing the Future of" speed={70} />
             <span className="highlight">
               <DecryptedText text=" Container Infrastructure" delay={2000} />
             </span>
@@ -78,7 +82,7 @@ const SimpleHomePage: React.FC = () => {
               <div className="feature-card">
                 <div className="feature-icon">🔐</div>
                 <h3>
-                  <DecryptedText text="Blockchain-Secured Infrastructure" className="decrypted-text" />
+                  <DecryptedText text="Blockchain-Secured Infrastructure" className="decrypted-text" delay={3} />
                 </h3>
                 <p>
                   Every container deployment is cryptographically signed and verified on the blockchain, 
@@ -89,9 +93,7 @@ const SimpleHomePage: React.FC = () => {
             <FadeUpText delay={0.6}>
               <div className="feature-card">
                 <div className="feature-icon">🌐</div>
-                <h3>
-                  <GlitchText text="Peer-to-Peer Networking" />
-                </h3>
+                <h3>Peer-to-Peer Networking</h3>
                 <p>
                   Containers communicate directly through encrypted P2P channels, eliminating traditional 
                   network bottlenecks and reducing latency.
