@@ -115,7 +115,7 @@ const SponsorsSection: React.FC = () => {
   return (
     <section className="sponsors-section">
       <div className="sponsors-container">
-        {/*<div className="sponsors-header">
+        <div className="sponsors-header">
           <h2>Our Sponsors</h2>
           <p>
             We're grateful to our sponsors who support the development of decentralized container infrastructure.
@@ -127,7 +127,7 @@ const SponsorsSection: React.FC = () => {
           {renderSponsorTier('gold', sponsorsData.sponsors.gold)}
           {renderSponsorTier('silver', sponsorsData.sponsors.silver)}
           {renderSponsorTier('bronze', sponsorsData.sponsors.bronze)}
-        </div>*/}
+        </div>
 
         <div className="become-sponsor">
           <h3>Become a Sponsor</h3>
