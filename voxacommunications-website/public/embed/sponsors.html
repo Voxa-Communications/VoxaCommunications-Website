@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Voxa Communications Sponsors - Embeddable Widget" />
+  <title>Voxa Communications Sponsors</title>
+  <style>
+    /* Reset and base styles for embedding */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #ffffff;
+      color: #333333;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    .sponsors-embed {
+      padding: 20px;
+      max-width: 100%;
+    }
+    
+    .sponsors-embed-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .sponsors-embed-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .sponsors-embed-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0;
+      color: #1a1a1a;
+      letter-spacing: -0.025em;
+    }
+    
+    .sponsors-embed-content {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    
+    .sponsor-tier-embed {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .tier-title-embed {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0;
+      text-align: center;
+      letter-spacing: -0.02em;
+    }
+    
+    .sponsors-grid-embed {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      width: 100%;
+    }
+    
+    .sponsor-card-embed {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      min-height: 100px;
+      min-width: 140px;
+    }
+    
+    .sponsor-card-embed:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-color: #d0d0d0;
+    }
+    
+    .sponsor-logo-embed {
+      max-width: 100%;
+      max-height: 50px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      margin-bottom: 8px;
+    }
+    
+    .sponsor-name-embed {
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-align: center;
+      color: #666666;
+      margin: 0;
+    }
+    
+    .platinum-grid-embed .sponsor-card-embed {
+      min-width: 180px;
+      min-height: 120px;
+    }
+    
+    .platinum-grid-embed .sponsor-logo-embed {
+      max-height: 70px;
+    }
+    
+    .gold-grid-embed .sponsor-card-embed {
+      min-width: 160px;
+      min-height: 110px;
+    }
+    
+    .gold-grid-embed .sponsor-logo-embed {
+      max-height: 60px;
+    }
+    
+    .silver-grid-embed .sponsor-card-embed {
+      min-width: 140px;
+      min-height: 100px;
+    }
+    
+    .bronze-grid-embed .sponsor-card-embed {
+      min-width: 120px;
+      min-height: 90px;
+    }
+    
+    .loading, .error {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 1rem;
+      color: #666666;
+    }
+    
+    .error {
+      color: #d73a49;
+    }
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .sponsors-embed {
+        padding: 15px;
+      }
+      
+      .sponsors-embed-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .tier-title-embed {
+        font-size: 1.1rem;
+      }
+      
+      .sponsors-grid-embed {
+        gap: 10px;
+      }
+      
+      .sponsor-card-embed {
+        min-width: 110px;
+        min-height: 80px;
+        padding: 10px;
+      }
+      
+      .platinum-grid-embed .sponsor-card-embed,
+      .gold-grid-embed .sponsor-card-embed,
+      .silver-grid-embed .sponsor-card-embed,
+      .bronze-grid-embed .sponsor-card-embed {
+        min-width: 110px;
+        min-height: 80px;
+      }
+      
+      .sponsor-logo-embed {
+        max-height: 35px;
+      }
+      
+      .sponsor-name-embed {
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sponsors-embed">
+    <div class="sponsors-embed-container">
+      <div class="sponsors-embed-header">
+        <h2>Our Sponsors</h2>
+      </div>
+      
+      <div class="sponsors-embed-content" id="sponsors-content">
+        <div class="loading">Loading sponsors...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fetch and display sponsors data
+    async function loadSponsors() {
+      try {
+        let response;
+        try {
+          // Try GitHub URL first
+          response = await fetch('https://raw.githubusercontent.com/Voxa-Communications/.github/refs/heads/main/static/sponsors.json');
+        } catch {
+          // Fallback to local sponsors.json
+          response = await fetch('./sponsors.json');
+        }
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch sponsors data');
+        }
+        
+        const data = await response.json();
+        renderSponsors(data);
+      } catch (error) {
+        document.getElementById('sponsors-content').innerHTML = 
+          '<div class="error">Failed to load sponsors</div>';
+      }
+    }
+    
+    function renderSponsors(sponsorsData) {
+      const content = document.getElementById('sponsors-content');
+      content.innerHTML = '';
+      
+      const tiers = ['platinum', 'gold', 'silver', 'bronze'];
+      
+      tiers.forEach(tierName => {
+        const sponsors = sponsorsData.sponsors[tierName];
+        if (sponsors && sponsors.length > 0) {
+          const tierData = sponsorsData.tiers[tierName];
+          
+          const tierDiv = document.createElement('div');
+          tierDiv.className = `sponsor-tier-embed ${tierName}`;
+          
+          const titleH3 = document.createElement('h3');
+          titleH3.className = 'tier-title-embed';
+          titleH3.style.color = tierData.color;
+          titleH3.textContent = tierData.name;
+          tierDiv.appendChild(titleH3);
+          
+          const gridDiv = document.createElement('div');
+          gridDiv.className = `sponsors-grid-embed ${tierName}-grid-embed`;
+          
+          sponsors.forEach(sponsor => {
+            const cardA = document.createElement('a');
+            cardA.className = 'sponsor-card-embed';
+            cardA.href = sponsor.website;
+            cardA.target = '_blank';
+            cardA.rel = 'noopener noreferrer';
+            cardA.title = sponsor.description;
+            
+            const logoImg = document.createElement('img');
+            logoImg.className = 'sponsor-logo-embed';
+            logoImg.src = sponsor.logo;
+            logoImg.alt = sponsor.name;
+            logoImg.onerror = function() {
+              this.src = `https://via.placeholder.com/150x60/666666/FFFFFF?text=${encodeURIComponent(sponsor.name)}`;
+            };
+            
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'sponsor-name-embed';
+            nameDiv.textContent = sponsor.name;
+            
+            cardA.appendChild(logoImg);
+            cardA.appendChild(nameDiv);
+            gridDiv.appendChild(cardA);
+          });
+          
+          tierDiv.appendChild(gridDiv);
+          content.appendChild(tierDiv);
+        }
+      });
+    }
+    
+    // Load sponsors when page loads
+    document.addEventListener('DOMContentLoaded', loadSponsors);
+  </script>
+</body>
+</html>

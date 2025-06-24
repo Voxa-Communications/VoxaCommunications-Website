@@ -24,7 +24,7 @@ const SimpleHomePage: React.FC = () => {
             <a href="#about" className="nav-link">About</a>
             <a href="#solutions" className="nav-link">Solutions</a>
             <a href="#contact" className="nav-link">Contact</a>
-            <button className="cta-button">Get Started</button>
+            <a href="https://voxacommunications-docs.pages.dev/learn/getting-started" className="cta-button">Get Started</a>
           </div>
         </SlideInText>
       </nav>
@@ -48,7 +48,7 @@ const SimpleHomePage: React.FC = () => {
         </SlideInText>
         <FadeUpText delay={1}>
           <div className="hero-buttons">
-            <button className="primary-button">Explore Our Platform</button>
+            <a href="https://voxacommunications-docs.pages.dev/general/services/" className="primary-button">Explore Our Platform</a>
             <a href="https://voxacommunications-docs.pages.dev/learn/about/" className="secondary-button">
               Learn more →
             </a>
